@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#02030a">
+<title>Our Little Universe 🌌</title>
+<style>
+:root{--ease:cubic-bezier(.22,1,.36,1)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#010208;color:#fff}
+body{font-family:Georgia,"Times New Roman",serif;touch-action:none}
+button{font:inherit}
+#space{position:fixed;inset:0;overflow:hidden;background:
+radial-gradient(circle at 50% 48%,rgba(72,48,130,.15),transparent 30%),
+radial-gradient(circle at 18% 76%,rgba(25,86,130,.12),transparent 30%),#010208}
+canvas{position:absolute;inset:0;width:100%;height:100%}
+#nebula{position:absolute;inset:-30%;pointer-events:none;filter:blur(45px);opacity:.8;
+background:
+radial-gradient(ellipse at 25% 40%,rgba(102,55,170,.13),transparent 22%),
+radial-gradient(ellipse at 70% 28%,rgba(35,121,170,.10),transparent 24%),
+radial-gradient(ellipse at 62% 78%,rgba(154,64,112,.07),transparent 20%);
+animation:neb 28s ease-in-out infinite alternate}
+@keyframes neb{to{transform:translate(4%,-3%) scale(1.08) rotate(2deg)}}
+
+#intro{position:absolute;z-index:50;inset:0;display:grid;place-items:center;text-align:center;padding:25px;
+background:radial-gradient(circle,rgba(4,5,15,.25),rgba(1,2,8,.82));transition:opacity 1.2s var(--ease),visibility 1.2s}
+#intro.hide{opacity:0;visibility:hidden}
+.introBox{max-width:700px;animation:floatIn 1.5s var(--ease)}
+@keyframes floatIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+.kicker{font:600 10px system-ui,sans-serif;letter-spacing:.36em;text-transform:uppercase;opacity:.5;margin-bottom:19px}
+h1{font-size:clamp(39px,9vw,78px);font-weight:400;letter-spacing:.04em;margin:0 0 13px;text-shadow:0 0 38px rgba(170,145,255,.25)}
+.subtitle{font:400 clamp(15px,2.8vw,20px)/1.75 system-ui,sans-serif;opacity:.72}
+.start{margin-top:31px;padding:13px 21px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.045);color:#fff;
+font:600 10px system-ui,sans-serif;letter-spacing:.2em;cursor:pointer;transition:.35s var(--ease);backdrop-filter:blur(10px)}
+.start:hover{transform:translateY(-3px);background:rgba(255,255,255,.09);box-shadow:0 12px 40px rgba(100,90,180,.14)}
+
+#hud{position:absolute;z-index:12;inset:0;pointer-events:none}
+#topHint{position:absolute;top:19px;left:50%;transform:translateX(-50%);white-space:nowrap;
+font:600 9px system-ui,sans-serif;letter-spacing:.23em;text-transform:uppercase;opacity:0;transition:opacity .9s}
+#topHint.show{opacity:.43}
+#progress{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:8px;opacity:0;transition:opacity 1s}
+.dot{width:5px;height:5px;border:1px solid rgba(255,255,255,.28);border-radius:50%;transition:.5s}
+.dot.on{background:#fff;box-shadow:0 0 13px rgba(255,255,255,.75);transform:scale(1.25)}
+
+#universe{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform}
+.orbit{position:absolute;left:50%;top:50%;border:1px solid rgba(255,255,255,.045);border-radius:50%;pointer-events:none}
+.o1{width:45%;height:29%;transform:translate(-50%,-50%) rotate(-12deg)}
+.o2{width:68%;height:45%;transform:translate(-50%,-50%) rotate(18deg)}
+.o3{width:91%;height:61%;transform:translate(-50%,-50%) rotate(-8deg)}
+.core{position:absolute;left:50%;top:50%;width:105px;height:105px;transform:translate(-50%,-50%);border-radius:50%;
+background:radial-gradient(circle,#fffbd1 0 7%,#ffc866 18%,#db7040 40%,rgba(130,43,29,.35) 63%,transparent 72%);
+filter:drop-shadow(0 0 30px rgba(255,170,70,.4));animation:corePulse 4s ease-in-out infinite;cursor:pointer}
+@keyframes corePulse{50%{transform:translate(-50%,-50%) scale(1.07);filter:drop-shadow(0 0 44px rgba(255,170,70,.55))}}
+.core:after{content:"";position:absolute;inset:-28px;border-radius:50%;border:1px solid rgba(255,220,150,.08);animation:spin 12s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.world{position:absolute;width:clamp(45px,6vw,72px);height:clamp(45px,6vw,72px);border:0;padding:0;border-radius:50%;transform:translate(-50%,-50%);
+cursor:pointer;transition:transform .55s var(--ease),filter .4s,opacity .5s;z-index:4}
+.world:before{content:"";position:absolute;inset:-18px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.13),transparent 67%);opacity:.28;transition:.4s}
+.world:hover,.world:focus-visible{transform:translate(-50%,-50%) scale(1.16);filter:brightness(1.2)}
+.world:hover:before{opacity:.7}
+.world.visited{filter:saturate(.7) brightness(.78)}
+.world.visited:after{content:"";position:absolute;inset:-7px;border:1px solid rgba(255,255,255,.16);border-radius:50%;animation:visited 2.5s ease-out infinite}
+@keyframes visited{0%,100%{opacity:.15;transform:scale(.94)}50%{opacity:.55;transform:scale(1.06)}}
+.p1{left:23%;top:33%;background:radial-gradient(circle at 30% 25%,#e6c6ff,#7651a7 44%,#211638 82%);box-shadow:0 0 30px rgba(137,98,220,.25)}
+.p2{left:76%;top:29%;background:radial-gradient(circle at 30% 24%,#fff4d8,#a69d88 44%,#3d3a34 82%);box-shadow:0 0 26px rgba(230,214,178,.2)}
+.p3{left:73%;top:70%;background:radial-gradient(circle at 30% 25%,#fff4bd,#a89240 45%,#352c10 84%);box-shadow:0 0 29px rgba(255,218,90,.22)}
+.p4{left:29%;top:70%;background:radial-gradient(circle at 30% 25%,#b9efff,#4b8dc1 43%,#102743 84%);box-shadow:0 0 30px rgba(83,177,236,.25)}
+.p5{left:50%;top:17%;background:radial-gradient(circle at 30% 25%,#c8c2b9,#716b64 42%,#242321 83%);box-shadow:0 0 24px rgba(180,168,151,.18)}
+.p6{left:84%;top:52%;background:radial-gradient(circle at 30% 25%,#fff7bf,#ffbd55 35%,#9f4525 72%,#43130c);box-shadow:0 0 36px rgba(255,170,65,.34)}
+.world .tag{position:absolute;left:50%;top:calc(100% + 12px);transform:translateX(-50%);white-space:nowrap;opacity:0;
+font:600 8px system-ui,sans-serif;letter-spacing:.19em;text-transform:uppercase;color:#fff;transition:.35s;pointer-events:none}
+.world:hover .tag,.world:focus-visible .tag{opacity:.62}
+.world .spark{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;top:-12px;right:2px;box-shadow:0 0 9px #fff;animation:spark 2.8s ease-in-out infinite}
+@keyframes spark{50%{opacity:.15;transform:scale(.4)}}
+
+#modal,#final{position:absolute;z-index:60;inset:0;display:grid;place-items:center;padding:22px;background:rgba(0,0,0,.35);backdrop-filter:blur(9px);
+opacity:0;visibility:hidden;transition:opacity .55s,visibility .55s}
+#modal.open,#final.show{opacity:1;visibility:visible}
+.card{width:min(650px,92vw);max-height:83vh;overflow:auto;padding:43px 27px 27px;border:1px solid rgba(255,255,255,.13);border-radius:25px;
+background:linear-gradient(145deg,rgba(18,19,35,.88),rgba(3,5,14,.84));box-shadow:0 30px 100px rgba(0,0,0,.55);text-align:center;animation:cardIn .65s var(--ease)}
+@keyframes cardIn{from{transform:translateY(20px) scale(.95);opacity:0}to{transform:none;opacity:1}}
+.symbol{font-size:25px;opacity:.72;margin-bottom:15px}
+.card h2{font-size:clamp(21px,4vw,32px);font-weight:400;letter-spacing:.07em;margin:0 0 19px}
+.card p{font:400 clamp(15px,2.6vw,18px)/1.78 system-ui,sans-serif;white-space:pre-line;opacity:.82;max-width:550px;margin:auto}
+.close{margin-top:28px;border:0;border-radius:999px;padding:11px 17px;background:rgba(255,255,255,.08);color:#fff;
+font:600 9px system-ui,sans-serif;letter-spacing:.17em;cursor:pointer}
+
+#final{background:radial-gradient(circle at center,rgba(28,19,51,.38),rgba(1,2,8,.75))}
+.finalBox{max-width:700px;text-align:center;animation:finalIn 2.2s var(--ease)}
+@keyframes finalIn{from{opacity:0;transform:translateY(25px) scale(.96)}to{opacity:1;transform:none}}
+.finalKicker{font:600 10px system-ui,sans-serif;letter-spacing:.42em;text-transform:uppercase;opacity:.46;margin-bottom:23px}
+.finalText{font:400 clamp(18px,3vw,25px)/1.85 system-ui,sans-serif;white-space:pre-line;opacity:.91}
+.finalLast{margin-top:28px;font-size:clamp(14px,2.3vw,18px);font-style:italic;opacity:.54}
+#constellation{position:absolute;z-index:5;inset:0;opacity:0;transition:opacity 2s;pointer-events:none}
+#constellation.show{opacity:1}
+.line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,rgba(225,215,255,.52),transparent);transform-origin:left center;filter:drop-shadow(0 0 6px rgba(180,160,255,.3))}
+.burst{position:absolute;left:50%;top:50%;width:5px;height:5px;border-radius:50%;background:#fff;box-shadow:0 0 14px 4px rgba(255,230,180,.8);opacity:0}
+.burst.go{animation:burst 1.5s ease-out forwards}
+@keyframes burst{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(26)}}
+.comet{position:absolute;width:120px;height:1px;opacity:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.85));transform:rotate(-27deg);filter:blur(.2px)}
+.comet.go{animation:comet 1.2s linear forwards}
+@keyframes comet{0%{opacity:0;transform:translate(0,0) rotate(-27deg)}12%{opacity:.9}100%{opacity:0;transform:translate(-330px,180px) rotate(-27deg)}}
+
+@media(max-width:600px){
+.p1{left:18%}.p2{left:80%}.p3{left:78%}.p4{left:19%;top:72%}.p5{top:14%}.p6{left:84%;top:55%}
+.core{width:80px;height:80px}.o1{width:62%;height:36%}.o2{width:94%;height:54%}.o3{width:125%;height:72%}
+}
+@media(prefers-reduced-motion:reduce){
+*,*:before,*:after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<div id="space">
+<div id="nebula"></div>
+<canvas id="stars"></canvas>
+<div id="universe">
+ <div class="orbit o1"></div><div class="orbit o2"></div><div class="orbit o3"></div>
+ <div class="core" id="core" aria-label="the centre of our universe"></div>
+ <button class="world p1" id="w1" aria-label="Random Talks"><span class="spark"></span><span class="tag">random talks</span></button>
+ <button class="world p2" id="w2" aria-label="Late Nights"><span class="spark"></span><span class="tag">late nights</span></button>
+ <button class="world p3" id="w3" aria-label="Little Things"><span class="spark"></span><span class="tag">little things</span></button>
+ <button class="world p4" id="w4" aria-label="Getting To Know You"><span class="spark"></span><span class="tag">getting to know you</span></button>
+ <button class="world p5" id="w5" aria-label="Distance"><span class="spark"></span><span class="tag">distance</span></button>
+ <button class="world p6" id="w6" aria-label="Sunshine"><span class="spark"></span><span class="tag">sunshine</span></button>
+</div>
+<div id="constellation"></div><div class="burst" id="burst"></div><div class="comet" id="comet"></div>
+
+<section id="intro">
+ <div class="introBox">
+  <div class="kicker">day thirteen · a little something for you</div>
+  <h1>Our Little Universe</h1>
+  <div class="subtitle">somewhere between all the stars…<br>I made a little place for us. 🌌❤️</div>
+  <button class="start" id="start">ENTER THE UNIVERSE ✦</button>
+ </div>
+</section>
+
+<div id="hud"><div id="topHint">explore slowly · there's more than you can see</div><div id="progress"></div></div>
+
+<div id="modal" role="dialog" aria-modal="true">
+ <div class="card"><div class="symbol" id="symbol">✦</div><h2 id="title"></h2><p id="message"></p><button class="close" id="close">BACK TO THE STARS</button></div>
+</div>
+
+<div id="final">
+ <div class="finalBox">
+  <div class="finalKicker">home</div>
+  <div class="finalText">I don't really know when it happened…
+
+somewhere between the random conversations,
+stupid jokes, little messages,
+and all those ordinary moments…
+
+you became someone pretty special to me. ❤️
+
+welcome to our little universe, sunshine. ☀️</div>
+  <div class="finalLast">maybe we'll add a few more stars someday. ✨</div>
+ </div>
+</div>
+
+<script>
+(()=> {
+const worlds=[
+{id:"w1",symbol:"✦",title:"Random Talks",text:`somehow we can start talking about one completely normal thing…
+and five minutes later we're talking about something completely random 😭
+
+honestly, I really like that about us.
+I could probably talk to you about absolutely nothing and still enjoy it. ❤️`},
+{id:"w2",symbol:"☾",title:"Late Nights",text:`there's something about talking to you at night.
+
+everything gets quieter, and somehow our conversations feel a little different.
+
+maybe it's the time…
+or maybe it's just you. 🌙❤️`},
+{id:"w3",symbol:"✧",title:"Little Things",text:`the random replies.
+the little reactions.
+the things you probably don't even realise you do.
+
+yeah… I notice them. 😭❤️
+
+and somehow, those tiny things end up meaning more than you'd expect.`},
+{id:"w4",symbol:"◇",title:"Getting To Know You",text:`one of my favourite things isn't just talking to you…
+
+it's getting to know you.
+
+little by little.
+your likes, your thoughts, your random stories, all of it.
+
+there's still so much I don't know about you…
+
+and honestly, I don't mind.
+I like having more of you to discover. 🫶🏼`},
+{id:"w5",symbol:"○",title:"Distance",text:`we're not exactly close enough to just meet whenever we want.
+
+sometimes I wish we were a little closer.
+
+but somehow, even with all that distance…
+you've still become a pretty big part of my everyday life. ❤️
+
+kinda funny how that happens, isn't it?`},
+{id:"w6",symbol:"☀",title:"Sunshine",text:`okay… this one's pretty obvious 😭
+
+somewhere along the way, you became my little bit of sunshine.
+
+and honestly…
+I kinda like having you there. ☀️❤️`}
+];
+
+const $=id=>document.getElementById(id);
+const intro=$("intro"),start=$("start"),hint=$("topHint"),progress=$("progress"),modal=$("modal");
+const universe=$("universe"),constellation=$("constellation"),burst=$("burst"),comet=$("comet");
+const title=$("title"),message=$("message"),symbol=$("symbol"),close=$("close"),final=$("final");
+let started=false,seen=new Set(),closed=false;
+
+worlds.forEach((w,i)=>{
+ const d=document.createElement("span");d.className="dot";d.id="d"+i;progress.appendChild(d);
+ $(w.id).addEventListener("click",()=>open(w));
+});
+function open(w){
+ if(!started)return;
+ title.textContent=w.title;message.textContent=w.text;symbol.textContent=w.symbol;
+ modal.classList.add("open");seen.add(w.id);$(w.id).classList.add("visited");
+ worlds.forEach((x,i)=>{if(seen.has(x.id))$("d"+i).classList.add("on")});
+}
+function closeModal(){modal.classList.remove("open")}
+close.onclick=closeModal;modal.onclick=e=>{if(e.target===modal)closeModal()};
+start.onclick=()=>{
+ started=true;intro.classList.add("hide");hint.classList.add("show");progress.style.opacity="1";
+ setTimeout(()=>hint.classList.remove("show"),4500);
+ cometRun();
+};
+$("core").addEventListener("click",()=>{
+ if(seen.size===worlds.length && started) finish();
+ else {hint.textContent="the centre is waiting… explore the little worlds first";hint.classList.add("show");setTimeout(()=>hint.classList.remove("show"),2200)}
+});
+
+function finish(){
+ if(final.classList.contains("show"))return;
+ constellation.classList.add("show");drawConstellation();burst.classList.remove("go");void burst.offsetWidth;burst.classList.add("go");
+ setTimeout(cometRun,500);setTimeout(cometRun,1600);setTimeout(()=>final.classList.add("show"),2600);
+}
+function drawConstellation(){
+ constellation.innerHTML="";
+ const pts=[[23,33],[76,29],[73,70],[29,70],[50,17],[84,52]];
+ [[0,1],[1,4],[4,5],[5,2],[2,3],[3,0],[0,4],[1,5],[4,2],[5,3]].forEach(([a,b])=>{
+  const [x1,y1]=pts[a],[x2,y2]=pts[b],dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)*180/Math.PI;
+  const l=document.createElement("i");l.className="line";l.style.left=x1+"%";l.style.top=y1+"%";l.style.width=len+"%";l.style.transform=`rotate(${ang}deg)`;constellation.appendChild(l);
+ });
+}
+function cometRun(){
+ comet.classList.remove("go");comet.style.left=(75+Math.random()*20)+"%";comet.style.top=(8+Math.random()*28)+"%";void comet.offsetWidth;comet.classList.add("go");
+}
+
+const canvas=$("stars"),ctx=canvas.getContext("2d"),DPR=Math.min(devicePixelRatio||1,2);
+let W,H,stars=[];
+function resize(){
+ W=canvas.width=innerWidth*DPR;H=canvas.height=innerHeight*DPR;canvas.style.width=innerWidth+"px";canvas.style.height=innerHeight+"px";
+ stars=Array.from({length:Math.min(430,Math.floor(innerWidth*innerHeight/3300))},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.35+.15,a:Math.random()*.7+.15,s:Math.random()*.015+.004,p:Math.random()*Math.PI*2}));
+}
+function draw(t){
+ ctx.clearRect(0,0,W,H);
+ const slow=t*.001;
+ for(const s of stars){
+  const a=s.a+(Math.sin(s.p+slow*s.s*35)*.5+.5)*.28;
+  ctx.globalAlpha=Math.min(.95,a);ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();
+ }
+ requestAnimationFrame(draw);
+}
+resize();addEventListener("resize",resize);requestAnimationFrame(draw);
+
+let tx=0,ty=0,rx=0,ry=0;
+addEventListener("pointermove",e=>{
+ if(!started)return;
+ const nx=(e.clientX/innerWidth-.5),ny=(e.clientY/innerHeight-.5);
+ tx=nx*10;ty=ny*8;rx=ny*1.2;ry=-nx*1.2;
+ universe.style.transform=`translate3d(${tx}px,${ty}px,0) rotateX(${rx}deg) rotateY(${ry}deg)`;
+});
+addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+})();
+</script>
+</body>
+</html>
